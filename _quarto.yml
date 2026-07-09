@@ -11,24 +11,18 @@ website:
       - text: "About Me"
         menu: 
           - text: "My Resume"
-            href: about.qmd
-          - text: "Political & Environmental Activism"
-            href: active.qmd
-      - text: "My Projects" 
+            href: CV.qmd
+      - text: "My Application" 
         menu: 
-        - text: "Bootstraping Example"
-          href: proj1.qmd          
-      - text: "Help"
-        href: help.qmd
+        - text: "My Cover Letter"
+          href: coverletter.qmd          
     sidebar: false
     tools:
       - icon: github
-        href: https://github.com/0-cal/my-portfolio
-      - icon: linkedin
-#       href: enter link
+        href: https://github.com/lisast2005/lisast2005.github.io
   page-footer:
     right: "Built with [Quarto](https://quarto.org/)"
-    left: "&copy; Copyright 2026, Owen Callahan"
+    left: "&copy; Copyright 2026, Lisa Steinbrinker"
 
 format:
   html:

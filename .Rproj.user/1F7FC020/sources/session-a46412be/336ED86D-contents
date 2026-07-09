@@ -1,0 +1,40 @@
+project:
+  type: website
+  output-dir: docs
+  
+website:
+  title: "My Portfolio"
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "About Me"
+        menu: 
+          - text: "My Resume"
+            href: CV.qmd
+      - text: "My Application" 
+        menu: 
+        - text: "My Cover Letter"
+          href: coverletter.qmd          
+    sidebar: false
+    tools:
+      - icon: github
+        href: https://github.com/lisast2005/lisast2005.github.io
+  page-footer:
+    right: "Built with [Quarto](https://quarto.org/)"
+    left: "&copy; Copyright 2026, Lisa Steinbrinker"
+
+format:
+  html:
+#    backgroundcolor: "blue"
+#    fontcolor: "green"
+#    linkcolor: "darkgreen"
+#    mainfont: "sarif"
+#    max-width: (width of the main text area of the pages)
+#    fontsize: (base font size for website)
+#    linestretch: (distance between lines of text)
+    theme: cosmo
+    toc: true
+
+editor: source
+

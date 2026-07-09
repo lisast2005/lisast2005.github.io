@@ -1,188 +1,25 @@
 ---
-title: "Bootstrapping Examples in R"
+title: "My Coverletter"
 format: html
 editor: 
   markdown: 
     wrap: 72
 ---
 
-What is Bootstrapping?
+Dear Name of HR Person,
 
-Bootstrapping is a procedure for estimating the distribution of an
-estimator by resampling (often with replacement) from the data or from a
-fitted model.
+I am writing to apply for the Data Analyst position at your company. I have followed your work for some time and greatly admire your innovative approach to using data to support business decisions. I am currently in my fourth semester of a Business Administration and Economics degree and am eager to apply my analytical skills in a professional environment.
 
-It assigns measures of accuracy (bias, variance, confidence intervals,
-prediction error) to sample estimates and allows estimation of the
-sampling distribution of almost any statistic using simulation.
+Through my studies, I have developed a solid foundation in statistics and economics. I have learned how to analyze data and draw meaningful insights to support business decision-making. To further strengthen my analytical expertise, I will begin a specialization in Data Science next semester. My goal is to contribute to your company by helping transform data into valuable business insights.
 
-I use rnorm function (randomize + normal distribution) to generate a
-practice set of data.
+In terms of technical skills, I am proficient in Microsoft Excel and have practical experience analyzing data using the statistical software R. My academic training has made me highly organized and detail-oriented, enabling me to produce accurate results even under tight deadlines. In addition, my part-time job has strengthened my sense of responsibility, problem-solving abilities, and teamwork skills, while also teaching me to work independently when required.
 
-Fit model
+I am particularly interested in joining your company because of its strong reputation and success in the field of data science. I am confident that my combination of business knowledge, analytical thinking, and technical skills would allow me to make a valuable contribution to your team.
 
-```{r}
-set.seed(123)
+Please find my enclosed résumé for further details about my qualifications. I would welcome the opportunity to discuss my application in an interview and explain how I can contribute to your organization.
 
-x <- rnorm(50, mean = 10, sd = 2)
-n <- length(x)
+Thank you for your time and consideration. I look forward to hearing from you.
 
-mu_hat <- mean(x)
-sd_hat <- sd(x)
-```
+Yours sincerely,
 
-Run bootstrap
-
-```{r}
-B <- 1000
-mu_boot <- numeric(B)
-
-for (b in 1:B) {
-  x_star <- rnorm(n, mean = mu_hat, sd = sd_hat)
-  mu_boot[b] <- mean(x_star)
-}
-```
-
-results
-
-```{r}
-boot_mean <- mean(mu_boot)
-boot_se <- sd(mu_boot)
-ci <- quantile(mu_boot, c(0.025, 0.975))
-
-boot_mean
-boot_se
-ci
-```
-
-## Example for linear regression
-
-```{r}
-set.seed(123)
-
-n <- 100
-x <- runif(n, 0, 10)
-y <- 5 + 2 * x + rnorm(n, 0, 2)
-```
-
-Fit linear model
-
-```{r}
-fit <- lm(y ~ x)
-summary(fit)
-```
-
-Extract parameters
-
-```{r}
-beta_hat <- coef(fit) 
-sigma_hat <- summary(fit)$sigma
-```
-
-Bootstrap
-
-```{r}
-B <- 1000
-beta_boot <- matrix(NA, nrow = B, ncol = length(beta_hat))
-
-for (b in 1:B) {
-  y_star <- beta_hat[1] + beta_hat[2] * x + rnorm(n, 0, sigma_hat)
-  fit_star <- lm(y_star ~ x)
-  beta_boot[b, ] <- coef(fit_star)
-}
-```
-
-Results
-
-```{r}
-boot_means <- colMeans(beta_boot)
-boot_ses <- apply(beta_boot, 2, sd)
-boot_ci <- apply(beta_boot, 2, quantile, probs = c(0.025, 0.975))
-
-boot_means
-boot_ses
-boot_ci
-```
-
-## Example for logistic regression
-
-Generate data using runif (randomize uniform distribution)
-
-```{r}
-set.seed(123)
-
-n <- 200
-x <- runif(n, 0, 10)
-
-beta0 <- -2
-beta1 <- 0.5
-
-p <- 1 / (1 + exp(-(beta0 + beta1 * x)))
-y <- rbinom(n, 1, p)
-
-data <- data.frame(y = y, x = x)
-
-fit <- glm(y ~ x,
-           family = binomial(link = "logit"),
-           data = data)
-
-summary(fit)
-```
-
-Extract estimated parameters
-
-```{r}
-beta_hat <- coef(fit)
-
-B <- 1000
-beta_boot <- matrix(NA, nrow = B, ncol = length(beta_hat))
-
-
-for (b in 1:B) {
-  p_hat <- 1 / (1 + exp(-(beta_hat[1] + beta_hat[2] * x)))
-  y_star <- rbinom(n, 1, p_hat)
-  
-  fit_star <- glm(y_star ~ x,
-                  family = binomial(link = "logit"))
-  
-  beta_boot[b, ] <- coef(fit_star)
-}
-
-colnames(beta_boot) <- names(beta_hat)
-```
-
-Results
-
-```{r}
-boot_means <- colMeans(beta_boot)
-boot_ses <- apply(beta_boot, 2, sd)
-boot_ci <- apply(beta_boot, 2, quantile, probs = c(0.025, 0.975))
-
-results <- data.frame(
-  Estimate = beta_hat,
-  BootMean = boot_means,
-  BootSE = boot_ses,
-  CI_lower = boot_ci[1, ],
-  CI_upper = boot_ci[2, ]
-)
-
-print(results)
-```
-
-lets graph both intercept and slope using histogram
-
-```{r}
-par(mfrow = c(1, 2))
-
-hist(beta_boot[,1],
-     main = "Bootstrap Intercept",
-     xlab = "beta0*",
-     breaks = 30)
-abline(v = beta_hat[1], col = "red", lwd = 2)
-
-hist(beta_boot[,2],
-     main = "Bootstrap Slope",
-     xlab = "beta1*",
-     breaks = 30)
-abline(v = beta_hat[2], col = "red", lwd = 2)
-```
+Lisa Steinbrinker
