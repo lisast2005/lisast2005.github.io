@@ -1,150 +1,31 @@
 [
   {
-    "objectID": "proj1.html",
-    "href": "proj1.html",
-    "title": "My Coverletter",
-    "section": "",
-    "text": "Dear Name of HR Person,\nI am writing to apply for the Data Analyst position at your company. I have followed your work for some time and greatly admire your innovative approach to using data to support business decisions. I am currently in my fourth semester of a Business Administration and Economics degree and am eager to apply my analytical skills in a professional environment.\nThrough my studies, I have developed a solid foundation in statistics and economics. I have learned how to analyze data and draw meaningful insights to support business decision-making. To further strengthen my analytical expertise, I will begin a specialization in Data Science next semester. My goal is to contribute to your company by helping transform data into valuable business insights.\nIn terms of technical skills, I am proficient in Microsoft Excel and have practical experience analyzing data using the statistical software R. My academic training has made me highly organized and detail-oriented, enabling me to produce accurate results even under tight deadlines. In addition, my part-time job has strengthened my sense of responsibility, problem-solving abilities, and teamwork skills, while also teaching me to work independently when required.\nI am particularly interested in joining your company because of its strong reputation and success in the field of data science. I am confident that my combination of business knowledge, analytical thinking, and technical skills would allow me to make a valuable contribution to your team.\nPlease find my enclosed résumé for further details about my qualifications. I would welcome the opportunity to discuss my application in an interview and explain how I can contribute to your organization.\nThank you for your time and consideration. I look forward to hearing from you.\nYours sincerely,\nLisa Steinbrinker"
-  },
-  {
-    "objectID": "proj1.html#example-for-linear-regression",
-    "href": "proj1.html#example-for-linear-regression",
-    "title": "Bootstrapping Examples in R",
-    "section": "Example for linear regression",
-    "text": "Example for linear regression\n\nset.seed(123)\n\nn &lt;- 100\nx &lt;- runif(n, 0, 10)\ny &lt;- 5 + 2 * x + rnorm(n, 0, 2)\n\nFit linear model\n\nfit &lt;- lm(y ~ x)\nsummary(fit)\n\n\nCall:\nlm(formula = y ~ x)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-4.4759 -1.2265 -0.0395  1.1927  4.4345 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept)  4.98208    0.39211   12.71   &lt;2e-16 ***\nx            1.98203    0.06836   28.99   &lt;2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 1.939 on 98 degrees of freedom\nMultiple R-squared:  0.8956,    Adjusted R-squared:  0.8945 \nF-statistic: 840.6 on 1 and 98 DF,  p-value: &lt; 2.2e-16\n\n\nExtract parameters\n\nbeta_hat &lt;- coef(fit) \nsigma_hat &lt;- summary(fit)$sigma\n\nBootstrap\n\nB &lt;- 1000\nbeta_boot &lt;- matrix(NA, nrow = B, ncol = length(beta_hat))\n\nfor (b in 1:B) {\n  y_star &lt;- beta_hat[1] + beta_hat[2] * x + rnorm(n, 0, sigma_hat)\n  fit_star &lt;- lm(y_star ~ x)\n  beta_boot[b, ] &lt;- coef(fit_star)\n}\n\nResults\n\nboot_means &lt;- colMeans(beta_boot)\nboot_ses &lt;- apply(beta_boot, 2, sd)\nboot_ci &lt;- apply(beta_boot, 2, quantile, probs = c(0.025, 0.975))\n\nboot_means\n\n[1] 4.956659 1.987527\n\nboot_ses\n\n[1] 0.39379308 0.06913355\n\nboot_ci\n\n          [,1]     [,2]\n2.5%  4.226149 1.858384\n97.5% 5.727671 2.115856"
-  },
-  {
-    "objectID": "proj1.html#example-for-logistic-regression",
-    "href": "proj1.html#example-for-logistic-regression",
-    "title": "Bootstrapping Examples in R",
-    "section": "Example for logistic regression",
-    "text": "Example for logistic regression\nGenerate data using runif (randomize uniform distribution)\n\nset.seed(123)\n\nn &lt;- 200\nx &lt;- runif(n, 0, 10)\n\nbeta0 &lt;- -2\nbeta1 &lt;- 0.5\n\np &lt;- 1 / (1 + exp(-(beta0 + beta1 * x)))\ny &lt;- rbinom(n, 1, p)\n\ndata &lt;- data.frame(y = y, x = x)\n\nfit &lt;- glm(y ~ x,\n           family = binomial(link = \"logit\"),\n           data = data)\n\nsummary(fit)\n\n\nCall:\nglm(formula = y ~ x, family = binomial(link = \"logit\"), data = data)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept) -1.77952    0.36534  -4.871 1.11e-06 ***\nx            0.47483    0.07425   6.395 1.61e-10 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 267.50  on 199  degrees of freedom\nResidual deviance: 210.62  on 198  degrees of freedom\nAIC: 214.62\n\nNumber of Fisher Scoring iterations: 4\n\n\nExtract estimated parameters\n\nbeta_hat &lt;- coef(fit)\n\nB &lt;- 1000\nbeta_boot &lt;- matrix(NA, nrow = B, ncol = length(beta_hat))\n\n\nfor (b in 1:B) {\n  p_hat &lt;- 1 / (1 + exp(-(beta_hat[1] + beta_hat[2] * x)))\n  y_star &lt;- rbinom(n, 1, p_hat)\n  \n  fit_star &lt;- glm(y_star ~ x,\n                  family = binomial(link = \"logit\"))\n  \n  beta_boot[b, ] &lt;- coef(fit_star)\n}\n\ncolnames(beta_boot) &lt;- names(beta_hat)\n\nResults\n\nboot_means &lt;- colMeans(beta_boot)\nboot_ses &lt;- apply(beta_boot, 2, sd)\nboot_ci &lt;- apply(beta_boot, 2, quantile, probs = c(0.025, 0.975))\n\nresults &lt;- data.frame(\n  Estimate = beta_hat,\n  BootMean = boot_means,\n  BootSE = boot_ses,\n  CI_lower = boot_ci[1, ],\n  CI_upper = boot_ci[2, ]\n)\n\nprint(results)\n\n             Estimate   BootMean     BootSE   CI_lower  CI_upper\n(Intercept) -1.779518 -1.8127758 0.37463075 -2.5968318 -1.133648\nx            0.474827  0.4839984 0.07756396  0.3501373  0.649960\n\n\nlets graph both intercept and slope using histogram\n\npar(mfrow = c(1, 2))\n\nhist(beta_boot[,1],\n     main = \"Bootstrap Intercept\",\n     xlab = \"beta0*\",\n     breaks = 30)\nabline(v = beta_hat[1], col = \"red\", lwd = 2)\n\nhist(beta_boot[,2],\n     main = \"Bootstrap Slope\",\n     xlab = \"beta1*\",\n     breaks = 30)\nabline(v = beta_hat[2], col = \"red\", lwd = 2)"
-  },
-  {
-    "objectID": "help.html",
-    "href": "help.html",
-    "title": "Help Page",
-    "section": "",
-    "text": "For detailed information on how to create a Quarto website, please visit Quarto’s Help Center.\n\nProject Files\nA Quarto website has:\n\n_quarto.yml → controls the entire website\n.qmd files → individual pages\nimages folder → store images\ndocs folder → Github pages access (do not touch the docs folder)\nstyles.css → styling specific pages\n.gitignore and .Rhistory → not too important, I would not touch\n.RData → data storage\nREADME.md → general instructions on how to publish website in case you need help later\n\nIf something changes across the whole website, edit _quarto.yml. If something changes on one page only, edit that page’s YAML.\n\n\nRender Website\nIf you want to preview your website locally, you can either\n\n\nclick render on the top left of RStudio\n\nor\n\ngo to terminal, and type quarto preview\n\n\n\nYAML\nwebsite:\n  title: \"My Portfolio\" # name your website\n  navbar: # navigation between pages\n    left: # chose where you want your nav bar to be located\n      - text: \"Home\" # the text diplayed\n        href: index.qmd # the name of the file linked to the text\n      - text: \"About Me\"\n        menu:  # add nested pages\n          - text: \"My Resume\"\n            href: about.qmd\n          - text: \"Political & Environmental Activism\"\n            href: active.qmd\nYAML indentation MUST use spaces, not tabs. Indentation defines hierarchy. A misplaced space will cause errors for your site.\nUseful advanced options:\n\ndraft: true → hides page from rendering\nfreeze: auto → avoids re-running heavy computations\npage-layout: full → removes side margins\npage-layout: article → default blog style\n\n\n\nStyles\nTo create the CSS File, click File → New File → Text File, and name the file however you like but make sure it ends with styles.css like the one in Owen’s template.\nTo link the styles.css file to a page of your choice, go to the yml code at the top of qmd file and paste the name of your css file\nformat:\n  html:\n    css: cv-styles.css\nTo learn how the css code works you can visit this youtube link:\nCustomize appearance with CSS/SCSS\nor visit Quarto’s Website\n\n\nImages\nAlways store images in the images folder.\nTo add an image, the easiest way is to first make sure you are in visual mode, then click insert, then click Figure/Image and chose the file on your computer.\n\n\nPublish Website\nYou will need an access token in order to link and publish your Quarto website on Github.\nIn Github, click Profile picture → Settings → Developer settings → Personal access tokens → Fine-grained tokens → generate new token\nWhen creating the token,\n\nyou must click Repository access, then choose “Only selected repositories”, and select your website repository\nclick Permissions, then click “Contents: Read and write” and “Metadata: Read-only”\nclick generate token\n!!Copy the token immediately!! save the token somewhere, once you leave the page, you cannot access the token again.\n\nGo back to RStudio and install the package gitcreds.\nOnce installed, load the package into your library, and open your R console. Type the following into your console\n\ngitcreds::gitcreds_set()\n\nthen paste the access token into your console and press enter your github should be linked now\nTo publish your website, open your terminal and type each line of code below and press enter after each command separately:\n\ngit init\nquarto render\ngit remote add origin https://github.com/USERNAME/REPOSITORY.git\ngit add -A\ngit commit -m “Update website”\ngit push\n\nIf you check your repository on Github, you should see the updated pages, then click the link on the right and you should be able to see your published website\nIf you want to update your website, then you only need to execute the following commands in your terminal again\n\nquarto render\ngit add -A\ngit commit -m “Update website”\ngit push"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Bachelor in Economics\nBielefeld University\n\n\n\n\n\nBachelor in Economics\nBielefeld University, Germany\n\n\n10/2024 – Present\n\n\n\n\nGeneral Higher Education Qualification\nCJD Gymnasium Versmold, Germany\n\n\n2016 – 2024\n\n\n\n\n\n\n\n\nAdministrative Assistent (Part-Time)\nWestfalen Tankstelle, Osnabrück, Germany\n\n\n10/2024 – Present\n\n\n\n\nPrivate Science Tutor\nSelf-employed, Versmold, Germany\n\n\n2023 – 2024\n\n\n\n\n\n\nDeveloped and presented a sustainability concept as part of a project in collaboration with KPMG\n\n\n\n\n\nStructured and solution-oriented working style\nStrong sense of responsibility\nTeamwork and communication skills\nAnalytical and conceptual thinking\nInitiative and commitment\n\n\n\n\n\n\nGerman: Native speaker\nEnglish: B2 (Independent User)\n\n\n\n\n\n\nStrength and endurance training\nReading and personal development\nWakeboarding"
-  },
-  {
-    "objectID": "about.html#education",
-    "href": "about.html#education",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Bachelor in Economics\nBielefeld University, Germany\n\n\n10/2024 – Present\n\n\n\n\nGeneral Higher Education Qualification\nCJD Gymnasium Versmold, Germany\n\n\n2016 – 2024"
-  },
-  {
-    "objectID": "about.html#professional-experience",
-    "href": "about.html#professional-experience",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Administrative Assistent (Part-Time)\nWestfalen Tankstelle, Osnabrück, Germany\n\n\n10/2024 – Present\n\n\n\n\nPrivate Science Tutor\nSelf-employed, Versmold, Germany\n\n\n2023 – 2024"
-  },
-  {
-    "objectID": "about.html#skills",
-    "href": "about.html#skills",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Structured and solution-oriented working style\nStrong sense of responsibility\nTeamwork and communication skills\nAnalytical and conceptual thinking\nInitiative and commitment"
-  },
-  {
-    "objectID": "about.html#certifications",
-    "href": "about.html#certifications",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "R Programming\nJohns Hopkins Bloomberg School of Public Health (2023–2024)\nMathematical Biostatistics\nJohns Hopkins Bloomberg School of Public Health (2023)"
-  },
-  {
-    "objectID": "about.html#awards",
-    "href": "about.html#awards",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Summa Cum Laude\n\nDean’s List\n\nBeyond Boundaries Scholar"
-  },
-  {
-    "objectID": "about.html#conferences",
-    "href": "about.html#conferences",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Social Simulation Conference (2025, Delft)\n\nUniC Summit (2021, Quebec)\n\nCOP25 United Nations Climate Change Conference (2019, Madrid)\n\nMid-Atlantic Undergraduate Research Conference (2019)\n\nNorth Carolina Applied Behavioral Association (2019)"
-  },
-  {
-    "objectID": "active.html",
-    "href": "active.html",
-    "title": "Political and Environmental Activism",
-    "section": "",
-    "text": "Climate change is one the most important issues to be discussed at the moment because it influences all aspects of our lives, and I think that everyone can make a difference in this matter. I would like to make a difference by advocating for policies that support sustainability and environmental justice.\n\n\nMy Journey\nI was only twelve years old when I started my journey as an activist. The first time I heard about global warming, I became fascinated with its science, which made me write extensively about it in school.\nOne of my first initiatives was to build a floating windmill, which I submitted to a competition at the local university. These experiences propelled me to continue my advocacy in college.\n\n\n\nVirginia Tech Climate Action Committee\nWhen I was a student at Virginia PolyTech University, I was part of the Climate Action Committee, where I had the opportunity to work together with the university administration, faculty, and students to develop and implement strategies to decrease the greenhouse gas emissions of the university. This experience has helped me develop skills in policy formulation and team problem-solving, while also teaching me the importance of academic institutions in addressing the issue of climate change.\n\n\n\nRepresenting at COP25\nBeing a student delegate at COP25 was a turning point in my activism. Attending the United Nations Climate Change Conference opened my eyes to the global reality of the climate crisis and the various approaches that nations are taking. Networking with representatives, experts, and other activists from other countries was both inspiring and enlightening. This reinforced my belief in the power of global cooperation and the urgent need for a united response to the climate crisis.\n\n\n\nEnvironmental Psychology and Hardt Hyperloop\nContinuing my education, I received a master’s degree in Environmental Psychology, where I utilized my skills and knowledge to further comprehend the human side of environmental issues. As a UX Researcher at Hardt Hyperloop, I researched views on sustainable transportation. This role helped me build my skills in research and comprehension of human perception.\n\n\nThe Scientist Rebellion\nThe Scientist Rebellion is a group of scientists who are fighting for drastic changes that can solve the climate crisis. By taking part in peaceful protests and rallies, we hoped that we could force the government and corporations to take drastic measures to address climate change. This experience has taught me to value civil disobedience as a tool for social change and the importance of scientists in the climate struggle.\n\n\nExpanding Activism\nMy activism has also led me beyond the issue of climate change and into the Free Palestine movement. The link between environmental justice and human rights has encouraged me to extend my activism. The Palestine movement has widened my understanding of global justice by showing me that true sustainability is not possible without social equality and human dignity. This broader perspective has reminded me that the struggle for a just and sustainable world is complex and interconnected.\n\n\nReflecting on My Journey\nMy involvement in all these different aspects of climate activism has had a huge impact on who I am today. Every single event has given me important lessons about activism and the climate crisis. Establishing the VTCJ Foundation taught me the power of community, while attending COP25 has given me a global perspective, and Scientist Rebellion has shown me the power of taking direct action.\nGoing forward, I am more committed than ever to continue working with organizations that are fighting climate change. I hope to use my experiences to motivate and inspire others."
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Welcome to My Website",
     "section": "",
-    "text": "Hi there! I’m Lisa, a student in Economics at Bielefeld University. Here you’ll find information about my background, skills, and education. Whether you’re a potential employer, colleague, or collaborator, I’m excited to share my journey with you."
+    "text": "Hi there!\nI’m Lisa, a student in Economics at Bielefeld University. Here you’ll find information about my background, skills, and education. Whether you’re a potential employer, colleague, or collaborator, I’m excited to share my journey with you."
   },
   {
     "objectID": "index.html#about-me",
     "href": "index.html#about-me",
     "title": "Welcome to My Website",
     "section": "",
-    "text": "Hi there! I’m Lisa, a student in Economics at Bielefeld University. Here you’ll find information about my background, skills, and education. Whether you’re a potential employer, colleague, or collaborator, I’m excited to share my journey with you."
+    "text": "Hi there!\nI’m Lisa, a student in Economics at Bielefeld University. Here you’ll find information about my background, skills, and education. Whether you’re a potential employer, colleague, or collaborator, I’m excited to share my journey with you."
   },
   {
-    "objectID": "index.html#dive-into-my-r-projects",
-    "href": "index.html#dive-into-my-r-projects",
+    "objectID": "index.html#what-you-will-find-on-this-website",
+    "href": "index.html#what-you-will-find-on-this-website",
     "title": "Welcome to My Website",
-    "section": "Dive into My R Projects",
-    "text": "Dive into My R Projects\nExplore my portfolio of R projects."
+    "section": "What you will find on this Website:",
+    "text": "What you will find on this Website:\n\nMy personal Resume\nMy Cover Letter"
   },
   {
-    "objectID": "index.html#help",
-    "href": "index.html#help",
+    "objectID": "index.html#contact-information",
+    "href": "index.html#contact-information",
     "title": "Welcome to My Website",
-    "section": "Help",
-    "text": "Help\nIf you’re part of the R course, you can find additional tips and resources to help you create your own personalized website."
-  },
-  {
-    "objectID": "index.html#connect-with-me",
-    "href": "index.html#connect-with-me",
-    "title": "Welcome to My Website",
-    "section": "Connect with Me",
-    "text": "Connect with Me\nInterested in collaborating on a project or discussing data science topics? Connect with me via email at owen.callahan@uni-bielefeld.de"
-  },
-  {
-    "objectID": "about.html#projects-and-engagement",
-    "href": "about.html#projects-and-engagement",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Developed and presented a sustainability concept as part of a project in collaboration with KPMG"
-  },
-  {
-    "objectID": "about.html#languages",
-    "href": "about.html#languages",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "German: Native speaker\nEnglish: B2 (Independent User)"
-  },
-  {
-    "objectID": "about.html#interests",
-    "href": "about.html#interests",
-    "title": "Curriculum Vitae",
-    "section": "",
-    "text": "Strength and endurance training\nReading and personal development\nWakeboarding"
-  },
-  {
-    "objectID": "coverletter.html",
-    "href": "coverletter.html",
-    "title": "My Coverletter",
-    "section": "",
-    "text": "Dear Name of HR Person,\nI am writing to apply for the Data Analyst position at your company. I have followed your work for some time and greatly admire your innovative approach to using data to support business decisions. I am currently in my fourth semester of a Business Administration and Economics degree and am eager to apply my analytical skills in a professional environment.\nThrough my studies, I have developed a solid foundation in statistics and economics. I have learned how to analyze data and draw meaningful insights to support business decision-making. To further strengthen my analytical expertise, I will begin a specialization in Data Science next semester. My goal is to contribute to your company by helping transform data into valuable business insights.\nIn terms of technical skills, I am proficient in Microsoft Excel and have practical experience analyzing data using the statistical software R. My academic training has made me highly organized and detail-oriented, enabling me to produce accurate results even under tight deadlines. In addition, my part-time job has strengthened my sense of responsibility, problem-solving abilities, and teamwork skills, while also teaching me to work independently when required.\nI am particularly interested in joining your company because of its strong reputation and success in the field of data science. I am confident that my combination of business knowledge, analytical thinking, and technical skills would allow me to make a valuable contribution to your team.\nPlease find my enclosed résumé for further details about my qualifications. I would welcome the opportunity to discuss my application in an interview and explain how I can contribute to your organization.\nThank you for your time and consideration. I look forward to hearing from you.\nYours sincerely,\nLisa Steinbrinker"
+    "section": "Contact Information",
+    "text": "Contact Information\nAny Questions left?\nContact me via email at lisa.steinbrinker@uni-bielefeld.de"
   },
   {
     "objectID": "CV.html",
@@ -196,17 +77,17 @@
     "text": "Strength and endurance training\nReading and personal development\nWakeboarding"
   },
   {
-    "objectID": "index.html#what-you-will-find-on-this-website",
-    "href": "index.html#what-you-will-find-on-this-website",
-    "title": "Welcome to My Website",
-    "section": "What you will find on this Website:",
-    "text": "What you will find on this Website:\n\nMy personal Resume\nMy Cover Letter"
+    "objectID": "coverletter.html",
+    "href": "coverletter.html",
+    "title": "My Coverletter",
+    "section": "",
+    "text": "Dear Name of HR Person,\nI am writing to apply for the Data Analyst position at your company. I have followed your work for some time and greatly admire your innovative approach to using data to support business decisions. I am currently in my fourth semester of a Business Administration and Economics degree and am eager to apply my analytical skills in a professional environment.\nThrough my studies, I have developed a solid foundation in statistics and economics. I have learned how to analyze data and draw meaningful insights to support business decision-making. To further strengthen my analytical expertise, I will begin a specialization in Data Science next semester. My goal is to contribute to your company by helping transform data into valuable business insights.\nIn terms of technical skills, I am proficient in Microsoft Excel and have practical experience analyzing data using the statistical software R. My academic training has made me highly organized and detail-oriented, enabling me to produce accurate results even under tight deadlines. In addition, my part-time job has strengthened my sense of responsibility, problem-solving abilities, and teamwork skills, while also teaching me to work independently when required.\nI am particularly interested in joining your company because of its strong reputation and success in the field of data science. I am confident that my combination of business knowledge, analytical thinking, and technical skills would allow me to make a valuable contribution to your team.\nPlease find my enclosed résumé for further details about my qualifications. I would welcome the opportunity to discuss my application in an interview and explain how I can contribute to your organization.\nThank you for your time and consideration. I look forward to hearing from you.\nYours sincerely,\nLisa Steinbrinker"
   },
   {
-    "objectID": "index.html#contact-information",
-    "href": "index.html#contact-information",
-    "title": "Welcome to My Website",
-    "section": "Contact Information",
-    "text": "Contact Information\nAny Questions left?\nContact me via email at lisa.steinbrinker@uni-bielefeld.de"
+    "objectID": "help.html",
+    "href": "help.html",
+    "title": "Help Page",
+    "section": "",
+    "text": "For detailed information on how to create a Quarto website, please visit Quarto’s Help Center.\n\nProject Files\nA Quarto website has:\n\n_quarto.yml → controls the entire website\n.qmd files → individual pages\nimages folder → store images\ndocs folder → Github pages access (do not touch the docs folder)\nstyles.css → styling specific pages\n.gitignore and .Rhistory → not too important, I would not touch\n.RData → data storage\nREADME.md → general instructions on how to publish website in case you need help later\n\nIf something changes across the whole website, edit _quarto.yml. If something changes on one page only, edit that page’s YAML.\n\n\nRender Website\nIf you want to preview your website locally, you can either\n\n\nclick render on the top left of RStudio\n\nor\n\ngo to terminal, and type quarto preview\n\n\n\nYAML\nwebsite:\n  title: \"My Portfolio\" # name your website\n  navbar: # navigation between pages\n    left: # chose where you want your nav bar to be located\n      - text: \"Home\" # the text diplayed\n        href: index.qmd # the name of the file linked to the text\n      - text: \"About Me\"\n        menu:  # add nested pages\n          - text: \"My Resume\"\n            href: about.qmd\n          - text: \"Political & Environmental Activism\"\n            href: active.qmd\nYAML indentation MUST use spaces, not tabs. Indentation defines hierarchy. A misplaced space will cause errors for your site.\nUseful advanced options:\n\ndraft: true → hides page from rendering\nfreeze: auto → avoids re-running heavy computations\npage-layout: full → removes side margins\npage-layout: article → default blog style\n\n\n\nStyles\nTo create the CSS File, click File → New File → Text File, and name the file however you like but make sure it ends with styles.css like the one in Owen’s template.\nTo link the styles.css file to a page of your choice, go to the yml code at the top of qmd file and paste the name of your css file\nformat:\n  html:\n    css: cv-styles.css\nTo learn how the css code works you can visit this youtube link:\nCustomize appearance with CSS/SCSS\nor visit Quarto’s Website\n\n\nImages\nAlways store images in the images folder.\nTo add an image, the easiest way is to first make sure you are in visual mode, then click insert, then click Figure/Image and chose the file on your computer.\n\n\nPublish Website\nYou will need an access token in order to link and publish your Quarto website on Github.\nIn Github, click Profile picture → Settings → Developer settings → Personal access tokens → Fine-grained tokens → generate new token\nWhen creating the token,\n\nyou must click Repository access, then choose “Only selected repositories”, and select your website repository\nclick Permissions, then click “Contents: Read and write” and “Metadata: Read-only”\nclick generate token\n!!Copy the token immediately!! save the token somewhere, once you leave the page, you cannot access the token again.\n\nGo back to RStudio and install the package gitcreds.\nOnce installed, load the package into your library, and open your R console. Type the following into your console\n\ngitcreds::gitcreds_set()\n\nthen paste the access token into your console and press enter your github should be linked now\nTo publish your website, open your terminal and type each line of code below and press enter after each command separately:\n\ngit init\nquarto render\ngit remote add origin https://github.com/USERNAME/REPOSITORY.git\ngit add -A\ngit commit -m “Update website”\ngit push\n\nIf you check your repository on Github, you should see the updated pages, then click the link on the right and you should be able to see your published website\nIf you want to update your website, then you only need to execute the following commands in your terminal again\n\nquarto render\ngit add -A\ngit commit -m “Update website”\ngit push"
   }
 ]
